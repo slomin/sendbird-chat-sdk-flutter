@@ -34,6 +34,7 @@ export 'src/public/main/collection/group_channel_message_collection/message_cont
 export 'src/public/main/collection/group_channel_message_collection/notification_collection.dart';
 export 'src/public/main/collection/group_channel_message_collection/notification_collection_handler.dart';
 export 'src/public/main/collection/group_channel_message_collection/notification_context.dart';
+export 'src/public/main/define/api_limits.dart';
 export 'src/public/main/define/enums.dart';
 export 'src/public/main/define/exceptions.dart';
 export 'src/public/main/define/sendbird_error.dart';

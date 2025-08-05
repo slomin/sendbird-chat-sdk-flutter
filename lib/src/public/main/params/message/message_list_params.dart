@@ -1,7 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/api_limits.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/message/base_message_fetch_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
@@ -13,7 +15,22 @@ part 'message_list_params.g.dart';
 class MessageListParams extends BaseMessageFetchParams {
   /// The number of previous messages added either before the timestamp or the message that has a specific message ID.
   @JsonKey(name: 'prev_limit')
-  int previousResultSize = BaseQuery.defaultQueryLimit;
+  int _previousResultSize = BaseQuery.defaultQueryLimit;
+  
+  int get previousResultSize => _previousResultSize;
+  
+  set previousResultSize(int value) {
+    // Warning only - we still accept values > 200 for backward compatibility
+    // The server will silently cap at 200, but we warn developers about this
+    if (value > maxMessageQueryLimit) {
+      sbLog.w(StackTrace.current,
+        'previousResultSize ($value) exceeds the API limit of $maxMessageQueryLimit. '
+        'The server will cap this at $maxMessageQueryLimit, which may cause pagination issues. '
+        'Consider using $recommendedMessageQueryLimit or less for optimal performance.'
+      );
+    }
+    _previousResultSize = value;
+  }
 
   /// The number of newer messages added either before the timestamp or the message that has a specific message ID.
   @JsonKey(name: 'next_limit')

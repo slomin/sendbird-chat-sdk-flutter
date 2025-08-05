@@ -715,8 +715,22 @@ abstract class BaseMessageCollection {
       if (noMoreApiCall || !_chat.connectionManager.isConnected()) {
         final count = _getExistedMessageCountInMessageList(
             loadedMessages: messages, targetMessages: targetMessages);
-        _hasPrevious =
-            messages.length - count == _loadPreviousParams.previousResultSize;
+
+        // Fix: Handle the 200 message API limit correctly
+        final receivedCount = messages.length - count;
+
+        // First implementation (kept for reference - same behaviour, more explicit):
+        // if (receivedCount == maxMessageQueryLimit) {
+        //   _hasPrevious = true;
+        // } else {
+        //   final effectiveRequest = requestedSize > maxMessageQueryLimit ? maxMessageQueryLimit : requestedSize;
+        //   _hasPrevious = receivedCount >= effectiveRequest;
+        // }
+
+        // Simplified logic: pagination continues if we got what we effectively requested
+        final requestedSize = _loadPreviousParams.previousResultSize;
+        final effectiveRequestSize = min(requestedSize, maxMessageQueryLimit);
+        _hasPrevious = receivedCount >= effectiveRequestSize;
       }
     } else {
       if (noMoreApiCall || !_chat.connectionManager.isConnected()) {

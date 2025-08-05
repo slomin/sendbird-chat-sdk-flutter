@@ -39,7 +39,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: '>=2.0.1 <6.0.0'
-  test: ^1.22.0
   stack_trace: ^1.11.0
   json_serializable: ^6.6.2
   build_runner: ^2.3.3
